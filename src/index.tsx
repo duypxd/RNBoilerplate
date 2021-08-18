@@ -1,12 +1,18 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { AppearanceProvider } from 'react-native-appearance';
+import NavigationContainer from './navigation';
+import { ThemeContext, ThemeProvider } from './themes/ThemeContext';
 
-const index = () => {
+const App = () => {
   return (
-    <View>
-      <Text />
-    </View>
+    <AppearanceProvider>
+      <ThemeProvider>
+        <ThemeContext.Consumer>
+          {contexts => <NavigationContainer {...contexts} />}
+        </ThemeContext.Consumer>
+      </ThemeProvider>
+    </AppearanceProvider>
   );
 };
 
-export default index;
+export default App;
