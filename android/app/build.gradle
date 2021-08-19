@@ -1,5 +1,13 @@
 apply plugin: "com.android.application"
 
+project.ext.envConfigFiles = [
+    debug: "./.env.dev",
+    releaseBeta: "./.env.beta",
+    release: "./.env.prod",
+]
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
 
 /**
@@ -147,10 +155,28 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            if (project.env.get('MYAPP_STORE_FILE')) {
+                storeFile file(project.env.get("MYAPP_STORE_FILE"))
+                storePassword project.env.get("MYAPP_STORE_PASSWORD")
+                keyAlias project.env.get("MYAPP_KEY_ALIAS")
+                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+            }
+        }
+        beta {
+            if (project.env.get('MYAPP_STORE_FILE')) {
+                storeFile file(project.env.get("MYAPP_STORE_FILE"))
+                storePassword project.env.get("MYAPP_STORE_PASSWORD")
+                keyAlias project.env.get("MYAPP_KEY_ALIAS")
+                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+            }
+        }
+        release {
+            if (project.env.get('MYAPP_STORE_FILE')) {
+                storeFile file(project.env.get("MYAPP_STORE_FILE"))
+                storePassword project.env.get("MYAPP_STORE_PASSWORD")
+                keyAlias project.env.get("MYAPP_KEY_ALIAS")
+                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+            }
         }
     }
     buildTypes {
@@ -160,9 +186,24 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        releaseBeta {
+            matchingFallbacks = ['release']
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.beta
+        }
+    }
+    sourceSets {
+        main { assets.srcDirs = ['src/main/assets'] }
+        releaseBeta {
+            res.srcDirs = ['src/beta/res', 'src/beta/res/']
+        }
+        release { 
+            res.srcDirs = ['src/prod/res', 'src/prod/res/']
         }
     }
 
@@ -220,3 +261,25 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// apply plugin: 'com.google.gms.google-services'
+
+task switchToDebug(type: Copy) {
+    description = 'Switches to DEBUG google-services.json'
+    from "src/debug"
+    include "google-services.json"
+    into "."
+}
+
+task switchToReleaseBeta(type: Copy) {
+    description = 'Switches to BETA google-services.json'
+    from "src/beta"
+    include "google-services.json"
+    into "."
+}
+
+task switchToRelease(type: Copy) {
+    description = 'Switches to RELEASE google-services.json'
+    from "src/prod"
+    include "google-services.json"
+    into "."
+}
