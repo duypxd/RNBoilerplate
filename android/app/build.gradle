@@ -2,8 +2,10 @@ apply plugin: "com.android.application"
 
 project.ext.envConfigFiles = [
     debug: "./.env.dev",
-    releaseBeta: "./.env.beta",
-    release: "./.env.prod",
+    releaseuat: "./.env.uat",
+    releasestaging: "./.env.staging",
+    releasesit: "./.env.sit",
+    release: "./.env.release",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -154,28 +156,49 @@ android {
         }
     }
     signingConfigs {
-        debug {
-            if (project.env.get('MYAPP_STORE_FILE')) {
-                storeFile file(project.env.get("MYAPP_STORE_FILE"))
-                storePassword project.env.get("MYAPP_STORE_PASSWORD")
-                keyAlias project.env.get("MYAPP_KEY_ALIAS")
-                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+         debug {
+            if (project.env.get('ANDROID_STORE_FILE')) {
+                storeFile file(project.env.get("ANDROID_STORE_FILE"))
+                storePassword project.env.get("ANDROID_STORE_PASSWORD")
+                keyAlias project.env.get("ANDROID_KEY_ALIAS")
+                keyPassword project.env.get("ANDROID_KEY_PASSWORD")
+            }else{
+                storeFile file('debug.keystore')
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
             }
         }
-        beta {
-            if (project.env.get('MYAPP_STORE_FILE')) {
-                storeFile file(project.env.get("MYAPP_STORE_FILE"))
-                storePassword project.env.get("MYAPP_STORE_PASSWORD")
-                keyAlias project.env.get("MYAPP_KEY_ALIAS")
-                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+        staging {
+            if (project.env.get('ANDROID_STORE_FILE')) {
+                storeFile file(project.env.get("ANDROID_STORE_FILE"))
+                storePassword project.env.get("ANDROID_STORE_PASSWORD")
+                keyAlias project.env.get("ANDROID_KEY_ALIAS")
+                keyPassword project.env.get("ANDROID_KEY_PASSWORD")
+            }
+        }
+        uat {
+            if (project.env.get('ANDROID_STORE_FILE')) {
+                storeFile file(project.env.get("ANDROID_STORE_FILE"))
+                storePassword project.env.get("ANDROID_STORE_PASSWORD")
+                keyAlias project.env.get("ANDROID_KEY_ALIAS")
+                keyPassword project.env.get("ANDROID_KEY_PASSWORD")
+            }
+        }
+        sit {
+            if (project.env.get('ANDROID_STORE_FILE')) {
+                storeFile file(project.env.get("ANDROID_STORE_FILE"))
+                storePassword project.env.get("ANDROID_STORE_PASSWORD")
+                keyAlias project.env.get("ANDROID_KEY_ALIAS")
+                keyPassword project.env.get("ANDROID_KEY_PASSWORD")
             }
         }
         release {
-            if (project.env.get('MYAPP_STORE_FILE')) {
-                storeFile file(project.env.get("MYAPP_STORE_FILE"))
-                storePassword project.env.get("MYAPP_STORE_PASSWORD")
-                keyAlias project.env.get("MYAPP_KEY_ALIAS")
-                keyPassword project.env.get("MYAPP_KEY_PASSWORD")
+            if (project.env.get('ANDROID_STORE_FILE')) {
+                storeFile file(project.env.get("ANDROID_STORE_FILE"))
+                storePassword project.env.get("ANDROID_STORE_PASSWORD")
+                keyAlias project.env.get("ANDROID_KEY_ALIAS")
+                keyPassword project.env.get("ANDROID_KEY_PASSWORD")
             }
         }
     }
@@ -190,22 +213,43 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
-        releaseBeta {
+        releaseStaging {
             matchingFallbacks = ['release']
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.beta
+            signingConfig signingConfigs.staging
+        }
+
+        releaseUAT {
+            matchingFallbacks = ['release']
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.uat
+        }
+
+        releaseSIT {
+            matchingFallbacks = ['release']
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.sit
+        }
+
+        release {
+            matchingFallbacks = ['release']
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
-    sourceSets {
-        main { assets.srcDirs = ['src/main/assets'] }
-        releaseBeta {
-            res.srcDirs = ['src/beta/res', 'src/beta/res/']
-        }
-        release { 
-            res.srcDirs = ['src/prod/res', 'src/prod/res/']
-        }
-    }
+    // sourceSets {
+    //     main { assets.srcDirs = ['src/main/assets'] }
+    //     releaseBeta {
+    //         res.srcDirs = ['src/beta/res', 'src/beta/res/']
+    //     }
+    //     release { 
+    //         res.srcDirs = ['src/prod/res', 'src/prod/res/']
+    //     }
+    // }
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
@@ -224,9 +268,17 @@ android {
     }
 }
 
+// afterEvaluate {
+//     processDebugGoogleServices.dependsOn switchToDebug
+//     processReleaseStagingGoogleServices.dependsOn switchToReleaseStaging
+//     processReleaseUATGoogleServices.dependsOn switchToReleaseUAT
+//     processReleaseSITGoogleServices.dependsOn switchToReleaseSIT
+//     processReleaseGoogleServices.dependsOn switchToRelease
+// }
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    //noinspection GradleDynamicVersion
+//noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
@@ -261,7 +313,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
-// apply plugin: 'com.google.gms.google-services'
 
 task switchToDebug(type: Copy) {
     description = 'Switches to DEBUG google-services.json'
@@ -270,16 +321,30 @@ task switchToDebug(type: Copy) {
     into "."
 }
 
-task switchToReleaseBeta(type: Copy) {
-    description = 'Switches to BETA google-services.json'
-    from "src/beta"
+task switchToRelease(type: Copy) {
+    description = 'Switches to RELEASE google-services.json'
+    from "src/release"
     include "google-services.json"
     into "."
 }
 
-task switchToRelease(type: Copy) {
-    description = 'Switches to RELEASE google-services.json'
-    from "src/prod"
+task switchToReleaseStaging(type: Copy) {
+    description = 'Switches to STAGING google-services.json'
+    from "src/releaseStaging"
     include "google-services.json"
     into "."
 }
+task switchToReleaseUAT(type: Copy) {
+    description = 'Switches to UAT google-services.json'
+    from "src/releaseUAT"
+    include "google-services.json"
+    into "."
+}
+task switchToReleaseSIT(type: Copy) {
+    description = 'Switches to SIT google-services.json'
+    from "src/releaseSIT"
+    include "google-services.json"
+    into "."
+}
+
+// apply plugin: 'com.google.gms.google-services'
