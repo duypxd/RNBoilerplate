@@ -10,7 +10,14 @@ export const setHeaderToAxios = (accessToken: string) => {
 
 const get = (url: string, params?: any) => axios.get(url, { params });
 
-const post = (url: string, data?: any) => axios.post(url, data);
+const post = async (url: string, data?: any) => {
+  try {
+    const response = await axios.post(url, data);
+    return response?.data;
+  } catch (err: any) {
+    return err?.response;
+  }
+};
 
 const put = (url: string, data?: any) => axios.put(url, data);
 

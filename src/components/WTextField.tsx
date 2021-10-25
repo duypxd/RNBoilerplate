@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from 'react';
 import { StyleSheet, TextInput, TextInputProps } from 'react-native';
+import WIcon, { TypeIcon } from './WIcon';
 import WText from './WText';
 import WTouchable from './WTouchable';
 import WView from './WView';
@@ -22,6 +23,7 @@ interface WTextFieldProps extends TextInputProps {
   wrapperStyle?: any;
   errorMessage?: string;
   borderRadius?: number;
+  IconType?: TypeIcon;
   borderWidth?: number;
   touched?: boolean;
   iconName?: string;
@@ -62,6 +64,7 @@ const WTextField = (
     onSubmitEditing,
     onPressRightIcon,
     textAlignVertical,
+    IconType = 'MaterialIcons',
   }: WTextFieldProps,
   ref: any,
 ) => {
@@ -146,8 +149,9 @@ const WTextField = (
                 mHoz={6}
                 onPress={onClearText}>
                 <WIcon
-                  name="ic-close-fill"
+                  name="close"
                   color={'rgba(0,0,0,0.45)'}
+                  type="MaterialIcons"
                   size={19}
                 />
               </WTouchable>
@@ -158,14 +162,20 @@ const WTextField = (
                 onPress={onPressRightIcon && onPressRightIcon}
                 disabled={!onPressRightIcon}
                 mLeft={6}>
-                <WIcon name={iconName} color={'#818181'} size={24} />
+                <WIcon
+                  name={iconName}
+                  color={'#818181'}
+                  size={24}
+                  type={IconType}
+                />
               </WTouchable>
             )}
             {isSecureTextEntry && (
               <WTouchable hit={16} onPress={onSetSecureTextEntry} mLeft={6}>
                 <WIcon
-                  name={!secureTextEntry ? 'ic-eye-fill' : 'ic-eye-close-fill'}
+                  name={!secureTextEntry ? 'eye' : 'eye-off'}
                   color={'rgba(0,0,0,0.45)'}
+                  type="Feather"
                   size={22}
                 />
               </WTouchable>
