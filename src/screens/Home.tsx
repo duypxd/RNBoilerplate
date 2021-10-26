@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import WButton from '../components/WButton';
 
 import WView from '../components/WView';
@@ -10,10 +10,43 @@ import type { ThemesApp } from '../themes/Colors';
 import { useTheme } from '../themes/ThemeContext';
 import { showAlertMessage } from '../utils/alert';
 import axios from '../api/axios';
+import WText from '../components/WText';
+import WTouchable from '../components/WTouchable';
+import WIcon from '../components/WIcon';
+
+async function fetchAllCv(page = 1) {
+  const body = {
+    sort: { full_name: -1 },
+    filter: {},
+    pagination: { pageSize: 10, page },
+  };
+  return await axios.post('api/cv-apply/get', body);
+}
 
 const Home = () => {
   const queryClient = useQueryClient();
   const Colors: ThemesApp = useTheme().Colors;
+  const [page, setPage] = useState<number>(1);
+  const [dataCV, setDataCV] = useState<any>({});
+  const { isFetching } = useQuery(
+    ['CVApplyGetAll', page],
+    () => fetchAllCv(page),
+    {
+      keepPreviousData: true,
+      staleTime: 5000,
+      onSuccess: res => {
+        // Ngu
+        if (page === 1) {
+          setDataCV(res);
+        } else {
+          setDataCV({
+            ...dataCV,
+            results: [...dataCV?.results, ...res?.results],
+          });
+        }
+      },
+    },
+  );
 
   const mutationSignOut = useMutation(
     async () => await axios.post('api/auth/signOut'),
@@ -30,10 +63,73 @@ const Home = () => {
 
   const signOut = () => mutationSignOut.mutate();
 
+  const loadMore = () => {
+    setPage(state => {
+      if (state === dataCV?.total_page) {
+        return state;
+      } else {
+        queryClient.prefetchQuery(['CVApplyGetAll', state + 1], () =>
+          fetchAllCv(state + 1),
+        );
+        return state + 1;
+      }
+    });
+  };
+
+  const renderItem = ({ item }: any) => {
+    return (
+      <WTouchable hit={10} mVer={16} mHoz={24}>
+        <WView row alignCenter>
+          <WIcon
+            name="person-outline"
+            type="MaterialIcons"
+            size={18}
+            color={Colors.primary}
+          />
+          <WText type="medium16" mLeft={8} color={Colors.text}>
+            {item?.full_name}
+          </WText>
+        </WView>
+        <WView row alignCenter mTop={6}>
+          <WIcon
+            name="mail-outline"
+            type="MaterialIcons"
+            size={18}
+            color={Colors.primary}
+          />
+          <WText mLeft={8} type="regular14" color={Colors.text}>
+            {`Position: ${item?.position_apply}`}
+          </WText>
+        </WView>
+      </WTouchable>
+    );
+  };
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: Colors.background }]}>
-      <WView fill center pHoz={28}>
+      <WView fill mTop={40}>
+        <WText type="medium20" mLeft={24} mBottom={12} color={Colors.primary}>
+          {'Salary Employee'}
+        </WText>
+        <FlatList
+          data={dataCV?.results}
+          renderItem={renderItem}
+          keyExtractor={(__, index: number) => `${index}-index`}
+          onEndReached={loadMore}
+          ItemSeparatorComponent={() => (
+            <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
+          )}
+          ListFooterComponent={() =>
+            isFetching ? (
+              <WView mTop={20}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+              </WView>
+            ) : null
+          }
+        />
+      </WView>
+      <WView mHoz={24}>
         <WButton
           title={'SignOut'}
           onPress={signOut}

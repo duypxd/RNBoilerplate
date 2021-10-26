@@ -13,22 +13,16 @@ import { ThemeContext, ThemeProvider } from './themes/ThemeContext';
 
 export const queryCache = new QueryCache({
   onError(error, query) {
-    console.log('queryCache', error, query);
+    return { error, query };
   },
   onSuccess: data => {
-    console.log('data 1', data);
+    return data;
   },
 });
 
 export const mutationCache = new MutationCache({
   onError(error, variables, context, mutation) {
-    console.log(
-      'mutationCache error',
-      error,
-      variables,
-      context,
-      mutation.options,
-    );
+    return { error, variables, context, mutation };
   },
   onSuccess: async (data: any) => {
     if (data?.token) {
