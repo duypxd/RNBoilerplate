@@ -28,14 +28,11 @@ const Home = () => {
   const Colors: ThemesApp = useTheme().Colors;
   const [page, setPage] = useState<number>(1);
   const [dataCV, setDataCV] = useState<any>({});
-  const { isFetching } = useQuery(
+  const { isFetching, isLoading } = useQuery(
     ['CVApplyGetAll', page],
     () => fetchAllCv(page),
     {
-      keepPreviousData: true,
-      staleTime: 5000,
       onSuccess: res => {
-        // Ngu
         if (page === 1) {
           setDataCV(res);
         } else {
@@ -64,16 +61,18 @@ const Home = () => {
   const signOut = () => mutationSignOut.mutate();
 
   const loadMore = () => {
-    setPage(state => {
-      if (state === dataCV?.total_page) {
-        return state;
-      } else {
-        queryClient.prefetchQuery(['CVApplyGetAll', state + 1], () =>
-          fetchAllCv(state + 1),
-        );
-        return state + 1;
-      }
-    });
+    if (!isFetching) {
+      setPage(state => {
+        if (state === dataCV?.total_page) {
+          return state;
+        } else {
+          queryClient.prefetchQuery(['CVApplyGetAll', state + 1], () =>
+            fetchAllCv(state + 1),
+          );
+          return state + 1;
+        }
+      });
+    }
   };
 
   const renderItem = ({ item }: any) => {
@@ -115,13 +114,15 @@ const Home = () => {
         <FlatList
           data={dataCV?.results}
           renderItem={renderItem}
+          onEndReachedThreshold={1}
+          maxToRenderPerBatch={5}
           keyExtractor={(__, index: number) => `${index}-index`}
           onEndReached={loadMore}
           ItemSeparatorComponent={() => (
             <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
           )}
           ListFooterComponent={() =>
-            isFetching ? (
+            isLoading ? (
               <WView mTop={20}>
                 <ActivityIndicator size="large" color={Colors.primary} />
               </WView>
