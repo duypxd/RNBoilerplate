@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import WButton from '../components/WButton';
@@ -27,7 +31,9 @@ const Home = () => {
   const queryClient = useQueryClient();
   const Colors: ThemesApp = useTheme().Colors;
   const [page, setPage] = useState<number>(1);
+  const [refreshing, setOnRefresh] = useState<boolean>(false);
   const [dataCV, setDataCV] = useState<any>({});
+
   const { isFetching, isLoading } = useQuery(
     ['CVApplyGetAll', page],
     () => fetchAllCv(page),
@@ -75,6 +81,13 @@ const Home = () => {
     }
   };
 
+  const onDebounceRefresh = () => {
+    queryClient.fetchQuery('CVApplyGetAll', () => {
+      setPage(1);
+      fetchAllCv(1);
+    });
+  };
+
   const renderItem = ({ item }: any) => {
     return (
       <WTouchable hit={10} mVer={16} mHoz={24}>
@@ -105,41 +118,41 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: Colors.background }]}>
-      <WView fill mTop={40}>
-        <WText type="medium20" mLeft={24} mBottom={12} color={Colors.primary}>
-          {'Salary Employee'}
-        </WText>
-        <FlatList
-          data={dataCV?.results}
-          renderItem={renderItem}
-          onEndReachedThreshold={1}
-          maxToRenderPerBatch={5}
-          keyExtractor={(__, index: number) => `${index}-index`}
-          onEndReached={loadMore}
-          ItemSeparatorComponent={() => (
-            <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
-          )}
-          ListFooterComponent={() =>
-            isLoading ? (
-              <WView mTop={20}>
-                <ActivityIndicator size="large" color={Colors.primary} />
-              </WView>
-            ) : null
-          }
-        />
-      </WView>
-      <WView mHoz={24}>
-        <WButton
-          title={'SignOut'}
-          onPress={signOut}
-          disabled={mutationSignOut.isLoading}
-          loading={mutationSignOut.isLoading}
-          mTop={24}
-        />
-      </WView>
-    </SafeAreaView>
+    <WView fill pHoz={16}>
+      <FlatList
+        data={dataCV?.results}
+        renderItem={renderItem}
+        onEndReachedThreshold={1}
+        maxToRenderPerBatch={5}
+        keyExtractor={(__, index: number) => `${index}-index`}
+        onEndReached={loadMore}
+        ItemSeparatorComponent={() => (
+          <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
+        )}
+        ListFooterComponent={() =>
+          isLoading ? (
+            <WView mTop={20}>
+              <ActivityIndicator size="large" color={Colors.primary} />
+            </WView>
+          ) : null
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onDebounceRefresh}
+            tintColor={Colors.primary}
+            titleColor={Colors.primary}
+          />
+        }
+      />
+      <WButton
+        title={'SignOut'}
+        onPress={signOut}
+        disabled={mutationSignOut.isLoading}
+        loading={mutationSignOut.isLoading}
+        mVer={24}
+      />
+    </WView>
   );
 };
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import React from 'react';
+import { ActivityIndicator } from 'react-native';
 import { useQuery } from 'react-query';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -39,11 +39,7 @@ const MainNavigator = () => {
   return (
     <Stack.Navigator>
       {data?.status || data?.result?._id ? (
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Salary Employee" component={Home} />
       ) : (
         <Stack.Screen
           name="Login"
@@ -56,11 +52,3 @@ const MainNavigator = () => {
 };
 
 export default MainNavigator;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
