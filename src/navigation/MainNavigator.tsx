@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from '../screens/Home';
 import Login from '../screens/Login';
+import FetchChing from '../screens/FetchChing';
 import WView from '../components/WView';
 import type { ThemesApp } from '../themes/Colors';
 import { useTheme } from '../themes/ThemeContext';
@@ -39,7 +40,14 @@ const MainNavigator = () => {
   return (
     <Stack.Navigator>
       {data?.status || data?.result?._id ? (
-        <Stack.Screen name="Salary Employee" component={Home} />
+        <>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={Home.navigationOptions}
+          />
+          <Stack.Screen name="FetchChing" component={FetchChing} />
+        </>
       ) : (
         <Stack.Screen
           name="Login"

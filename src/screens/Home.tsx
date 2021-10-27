@@ -5,6 +5,7 @@ import {
   RefreshControl,
   StyleSheet,
 } from 'react-native';
+import type { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import WButton from '../components/WButton';
@@ -28,13 +29,12 @@ async function fetchAllCv(page = 1) {
 }
 
 const Home = () => {
-  const queryClient = useQueryClient();
   const Colors: ThemesApp = useTheme().Colors;
+  const queryClient = useQueryClient();
   const [page, setPage] = useState<number>(1);
-  const [refreshing, setOnRefresh] = useState<boolean>(false);
   const [dataCV, setDataCV] = useState<any>({});
 
-  const { isFetching, isLoading } = useQuery(
+  const { isFetching, status, refetch, isLoading } = useQuery(
     ['CVApplyGetAll', page],
     () => fetchAllCv(page),
     {
@@ -81,85 +81,100 @@ const Home = () => {
     }
   };
 
-  const onDebounceRefresh = () => {
-    queryClient.fetchQuery('CVApplyGetAll', () => {
+  const onDebounceRefresh = async () => {
+    try {
       setPage(1);
-      fetchAllCv(1);
-    });
+      await refetch();
+    } catch (err) {}
   };
 
-  const renderItem = ({ item }: any) => {
-    return (
-      <WTouchable hit={10} mVer={16} mHoz={24}>
-        <WView row alignCenter>
-          <WIcon
-            name="person-outline"
-            type="MaterialIcons"
-            size={18}
-            color={Colors.primary}
-          />
-          <WText type="medium16" mLeft={8} color={Colors.text}>
-            {item?.full_name}
-          </WText>
-        </WView>
-        <WView row alignCenter mTop={6}>
-          <WIcon
-            name="mail-outline"
-            type="MaterialIcons"
-            size={18}
-            color={Colors.primary}
-          />
-          <WText mLeft={8} type="regular14" color={Colors.text}>
-            {`Position: ${item?.position_apply}`}
-          </WText>
-        </WView>
-      </WTouchable>
-    );
-  };
-
+  const renderItem = ({ item }: any) => (
+    <WTouchable hit={10} mVer={16} pHoz={16}>
+      <WView row alignCenter>
+        <WIcon
+          name="person-outline"
+          type="MaterialIcons"
+          size={18}
+          color={Colors.primary}
+        />
+        <WText type="medium16" mLeft={8} color={Colors.text}>
+          {item?.full_name}
+        </WText>
+      </WView>
+      <WView row alignCenter mTop={6}>
+        <WIcon
+          name="mail-outline"
+          type="MaterialIcons"
+          size={18}
+          color={Colors.primary}
+        />
+        <WText mLeft={8} type="regular14" color={Colors.text}>
+          {`Position: ${item?.position_apply}`}
+        </WText>
+      </WView>
+    </WTouchable>
+  );
   return (
-    <WView fill pHoz={16}>
-      <FlatList
-        data={dataCV?.results}
-        renderItem={renderItem}
-        onEndReachedThreshold={1}
-        maxToRenderPerBatch={5}
-        keyExtractor={(__, index: number) => `${index}-index`}
-        onEndReached={loadMore}
-        ItemSeparatorComponent={() => (
-          <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
-        )}
-        ListFooterComponent={() =>
-          isLoading ? (
-            <WView mTop={20}>
-              <ActivityIndicator size="large" color={Colors.primary} />
-            </WView>
-          ) : null
-        }
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={onDebounceRefresh}
-            tintColor={Colors.primary}
-            titleColor={Colors.primary}
-          />
-        }
-      />
-      <WButton
-        title={'SignOut'}
-        onPress={signOut}
-        disabled={mutationSignOut.isLoading}
-        loading={mutationSignOut.isLoading}
-        mVer={24}
-      />
+    <WView fill>
+      <WView fill>
+        <FlatList
+          data={dataCV?.results}
+          renderItem={renderItem}
+          onEndReachedThreshold={1}
+          maxToRenderPerBatch={5}
+          keyExtractor={(__, index: number) => `${index}-index`}
+          onEndReached={loadMore}
+          ItemSeparatorComponent={() => (
+            <WView style={StyleSheet.hairlineWidth} color={Colors.text} />
+          )}
+          ListFooterComponent={() =>
+            status === 'loading' ? (
+              <WView mTop={20}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+              </WView>
+            ) : null
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={onDebounceRefresh}
+              tintColor={Colors.primary}
+              titleColor={Colors.primary}
+            />
+          }
+        />
+      </WView>
+      <WView pVer={16} pHoz={24}>
+        <WButton
+          title={'SignOut'}
+          onPress={signOut}
+          disabled={mutationSignOut.isLoading}
+          loading={mutationSignOut.isLoading}
+        />
+      </WView>
     </WView>
   );
 };
 
 export default Home;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+Home.navigationOptions = ({
+  navigation,
+}: any): NativeStackNavigationOptions => {
+  const Colors: ThemesApp = useTheme().Colors;
+  return {
+    headerStyle: {
+      backgroundColor: Colors.background,
+    },
+    headerRight: () => (
+      <WTouchable hit={10} onPress={() => navigation.navigate('FetchChing')}>
+        <WIcon
+          name="list-alt"
+          color={Colors.primary}
+          size={24}
+          type="MaterialIcons"
+        />
+      </WTouchable>
+    ),
+  };
+};
