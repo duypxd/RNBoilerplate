@@ -366,12 +366,16 @@ PODS:
     - FirebaseCoreExtension (= 9.5.0)
     - React-Core
     - RNFBApp
+  - RNGestureHandler (2.6.0):
+    - React-Core
   - RNScreens (3.5.0):
     - React-Core
     - React-RCTImage
   - RNSentry (4.2.4):
     - React-Core
     - Sentry (= 7.23.0)
+  - RNVectorIcons (9.2.0):
+    - React-Core
   - Sentry (7.23.0):
     - Sentry/Core (= 7.23.0)
   - Sentry/Core (7.23.0)
@@ -417,8 +421,10 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -514,10 +520,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -572,8 +582,10 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 1c15bd65d0555a4246107dd9b5b9d9095aa6ad76
   RNFBApp: 1b3411b5134a4e27e92fbf9df7f97603f6c7029a
   RNFBMessaging: 3df81ace965865da6ce0be05b70726aeb84465f5
+  RNGestureHandler: 920eb17f5b1e15dae6e5ed1904045f8f90e0b11e
   RNScreens: 01ab149b5dd5c27f5ff26741b1d2bdf2cee1af35
   RNSentry: 7495ba091f09f12902d8cf916024efd99b058efe
+  RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   Sentry: a0d4563fa4ddacba31fdcc35daaa8573d87224d6
   Yoga: c2b1f2494060865ac1f27e49639e72371b1205fa
 
