@@ -1,8 +1,11 @@
+import 'react-native-gesture-handler';
+
 import {AppRegistry, LogBox} from 'react-native';
 import Config from 'react-native-config';
+import * as Sentry from '@sentry/react-native';
+
 import App from './src';
 import {name as appName} from './app.json';
-import * as Sentry from '@sentry/react-native';
 
 LogBox.ignoreLogs(['new NativeEventEmitter', 'EventEmitter.removeListener']);
 

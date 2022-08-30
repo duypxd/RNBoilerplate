@@ -8,7 +8,7 @@ buildscript {
         targetSdkVersion = 31
         // ndkVersion = "20.1.5948944"
         firebaseIidVersion = "19.0.1"
-        kotlinVersion = "1.4.31" // Or any version above 1.3.x
+        kotlinVersion = "1.5.20"
         RNNKotlinVersion = kotlinVersion
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
