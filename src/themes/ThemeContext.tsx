@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import { useColorScheme } from 'react-native';
+import {useColorScheme} from 'react-native';
 
-import { supportSystemTheme } from '../utils/deviceInfo';
+import {supportSystemTheme} from '../utils/deviceInfo';
 import * as ThemeColors from '../themes/Colors';
 
 const THEME_PREFERENCES_KEY = 'RC_THEME_PREFERENCES_KEY';
@@ -13,7 +13,7 @@ export const ThemeContext = React.createContext({
   setSchemeTheme: () => {},
 });
 
-export const ThemeProvider = ({ children }: any) => {
+export const ThemeProvider = ({children}: any) => {
   const useScheme: any = useColorScheme();
   const colorScheme = supportSystemTheme() ? useScheme : 'light';
   const [isDarkTheme, setIsDarkTheme] = useState(colorScheme === 'dark');

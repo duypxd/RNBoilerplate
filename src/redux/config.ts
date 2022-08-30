@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 const configSlice = createSlice({
   name: 'config',
@@ -6,13 +6,13 @@ const configSlice = createSlice({
     isSkip: false,
   },
   reducers: {
-    markSkipIntro: (state, { payload }) => {
+    markSkipIntro: (state, {payload}) => {
       state.isSkip = payload;
     },
   },
   extraReducers: {},
 });
 
-export const { actions, reducer: config } = configSlice;
+export const {actions, reducer: config} = configSlice;
 
 export default config;

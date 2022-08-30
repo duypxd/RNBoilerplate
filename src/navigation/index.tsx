@@ -1,9 +1,9 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import {StatusBar} from 'react-native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 
 import MainNavigator from './MainNavigator';
-import type { ThemesApp } from '../themes/Colors';
+import type {ThemesApp} from '../themes/Colors';
 
 interface AppNavigatorProps {
   Colors: ThemesApp;
@@ -11,7 +11,7 @@ interface AppNavigatorProps {
   setSchemeTheme?: (scheme: 'light' | 'dark') => void;
 }
 
-const AppNavigator = ({ Colors }: AppNavigatorProps) => {
+const AppNavigator = ({Colors}: AppNavigatorProps) => {
   const navigatorTheme = {
     ...DefaultTheme,
     colors: {

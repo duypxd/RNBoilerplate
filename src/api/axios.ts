@@ -8,7 +8,7 @@ export const setHeaderToAxios = (accessToken: string) => {
   axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 };
 
-const get = (url: string, params?: any) => axios.get(url, { params });
+const get = (url: string, params?: any) => axios.get(url, {params});
 
 const post = (url: string, data?: any) => axios.post(url, data);
 

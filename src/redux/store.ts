@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import {configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
 import {
   persistReducer,
   persistStore,
@@ -11,7 +11,7 @@ import {
 } from 'redux-persist';
 import logger from 'redux-logger';
 import persist from './persist';
-import { allReducers } from './reducers';
+import {allReducers} from './reducers';
 
 const middleware = [
   ...getDefaultMiddleware({
